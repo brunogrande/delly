@@ -68,14 +68,14 @@ if args.vcfFile:
             rcAlt = []
             nCount = 0
             tCount = 0
-            for call in record.samples:
+            for i, call in enumerate(record.samples):
                 if call.called:
-                    if re.search(r"[Nn]ormal", call.sample) != None:
+                    if re.search(r"[Nn]ormal", call.sample) != None or i == 1:  # Only used for tumour normal pairs, where the tumour comes first and the normal second
                         nCount += 1
                         if call.gt_type == 0:
                             if ((not precise) and (call['DV'] == 0)) or ((precise) and (call['RV'] == 0)):
                                 rcRef.append(call['RC'])
-                    if re.search(r"[Tt]umo[ur]", call.sample) != None:
+                    if re.search(r"[Tt]umo[ur]", call.sample) != None or i == 0:  # Only used for tumour normal pairs, where the tumour comes first and the normal second
                         tCount += 1
                         if call.gt_type != 0:
                             if ((not precise) and (call['DV'] >= 2) and (float(call['DV'])/float(call['DV']+call['DR']) >= altAF)) or ((precise) and (call['RV'] >= 2) and (float(call['RV'])/float(call['RR'] + call['RV']) >= altAF)):
